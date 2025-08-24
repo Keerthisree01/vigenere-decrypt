@@ -14,6 +14,8 @@ It also uses a simple spell checker to **auto-correct the decrypted message** fo
 # Screenshot of app UI after deploment
 
 <img width="1366" height="680" alt="Vigenère Cipher Tool - Google Chrome 24-08-2025 22_34_09" src="https://github.com/user-attachments/assets/fecc3ea3-dca4-407b-9603-80389a83c243" />
+
+
 # License
 
 This project is licensed under the MIT License.
