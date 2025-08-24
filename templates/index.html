@@ -1,24 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Vigenère Cipher Tool</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vigenère Cipher Tool</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h2>Vigenère Cipher Tool</h2>
-    <form method="POST">
-        <textarea name="text" rows="4" cols="50" placeholder="Enter text here..."></textarea><br><br>
-        <input type="text" name="keyword" placeholder="Keyword (for encrypt/decrypt)"><br><br>
-        <button type="submit" name="action" value="encrypt">Encrypt</button>
-        <button type="submit" name="action" value="decrypt">Decrypt</button>
-        <button type="submit" name="action" value="auto">Auto-Decrypt</button>
-    </form>
+<body class="bg-light">
+
+  <div class="container py-5">
+    <div class="text-center mb-4">
+      <h1 class="fw-bold">🔐 Vigenère Cipher Tool</h1>
+      <p class="text-muted">Encrypt, Decrypt, or Auto-Decrypt messages with ease</p>
+    </div>
+
+    <div class="card shadow-lg p-4 rounded-4">
+      <form method="POST">
+        <!-- Text Input -->
+        <div class="mb-3">
+          <label for="text" class="form-label fw-bold">Message</label>
+          <textarea id="text" name="text" rows="4" class="form-control" placeholder="Enter text here..." required>{{ request.form.text or '' }}</textarea>
+        </div>
+
+        <!-- Keyword Input -->
+        <div class="mb-3">
+          <label for="keyword" class="form-label fw-bold">Keyword</label>
+          <input type="text" id="keyword" name="keyword" class="form-control" placeholder="Enter keyword (ignored for Auto-Decryption)" value="{{ request.form.keyword or '' }}">
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-center gap-3 mb-3">
+          <button type="submit" name="action" value="encrypt" class="btn btn-success px-4">Encrypt</button>
+          <button type="submit" name="action" value="decrypt" class="btn btn-primary px-4">Decrypt</button>
+          <button type="submit" name="action" value="auto-decrypt" class="btn btn-warning px-4">Auto-Decrypt</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Results -->
     {% if result %}
-        <h3>Result:</h3>
-        <p>{{ result }}</p>
-        {% if guessed_key %}
-            <p><b>Guessed Key:</b> {{ guessed_key }}</p>
-        {% endif %}
+    <div class="card shadow-lg p-4 rounded-4 mt-4">
+      <h5 class="fw-bold">Result:</h5>
+      <p class="text-dark fs-5">{{ result }}</p>
+
+      {% if guessed_key %}
+      <p class="text-muted"><strong>Guessed Key:</strong> {{ guessed_key }}</p>
+      {% endif %}
+    </div>
     {% endif %}
+
+    <footer class="text-center mt-4 text-muted">
+      <p>Made with ❤️ using Flask & Bootstrap</p>
+    </footer>
+  </div>
+
 </body>
 </html>
+
