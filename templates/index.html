@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vigenère Cipher Tool</title>
+</head>
+<body>
+    <h2>Vigenère Cipher Tool</h2>
+    <form method="POST">
+        <textarea name="text" rows="4" cols="50" placeholder="Enter text here..."></textarea><br><br>
+        <input type="text" name="keyword" placeholder="Keyword (for encrypt/decrypt)"><br><br>
+        <button type="submit" name="action" value="encrypt">Encrypt</button>
+        <button type="submit" name="action" value="decrypt">Decrypt</button>
+        <button type="submit" name="action" value="auto">Auto-Decrypt</button>
+    </form>
+    {% if result %}
+        <h3>Result:</h3>
+        <p>{{ result }}</p>
+        {% if guessed_key %}
+            <p><b>Guessed Key:</b> {{ guessed_key }}</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
