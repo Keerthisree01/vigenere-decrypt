@@ -10,13 +10,19 @@ def index():
 
     if request.method == "POST":
         action = request.form.get("action")
-        text = request.form.get("text", "")
-        keyword = request.form.get("keyword", "")
+        text = request.form.get("text", "").strip().upper()
+        keyword = request.form.get("keyword", "").strip().upper()
 
-        if action == "encrypt" and keyword:
-            result = vigenere_encrypt(text, keyword)
-        elif action == "decrypt" and keyword:
-            result = vigenere_decrypt(text, keyword)
+        if action == "encrypt":
+            if keyword:
+                result = vigenere_encrypt(text, keyword)
+            else:
+                result = "⚠️ Please enter a keyword for encryption."
+        elif action == "decrypt":
+            if keyword:
+                result = vigenere_decrypt(text, keyword)
+            else:
+                result = "⚠️ Please enter a keyword for decryption."
         elif action == "auto":
             result, guessed_key = auto_vigenere_decrypt(text)
 
