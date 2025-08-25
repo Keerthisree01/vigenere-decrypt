@@ -1,59 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vigenère Cipher Tool</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Cipher Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
-  <div class="container py-5">
-    <div class="text-center mb-4">
-      <h1 class="fw-bold">🔐 Vigenère Cipher Tool</h1>
-      <p class="text-muted">Encrypt, Decrypt, or Auto-Decrypt messages with ease</p>
-    </div>
+<div class="container py-5">
+    <h2 class="text-center mb-4">🔐 Vigenère Cipher Tool</h2>
 
-    <div class="card shadow-lg p-4 rounded-4">
-      <form method="POST">
-        <!-- Text Input -->
+    <form method="POST" class="card shadow p-4">
+        <!-- Text input -->
         <div class="mb-3">
-          <label for="text" class="form-label fw-bold">Message</label>
-          <textarea id="text" name="text" rows="4" class="form-control" placeholder="Enter text here..." required>{{ request.form.text or '' }}</textarea>
+            <label for="text" class="form-label">Enter your text (plaintext or ciphertext):</label>
+            <textarea class="form-control" id="text" name="text" rows="4" required>{{ request.form.get('text', '') }}</textarea>
         </div>
 
-        <!-- Keyword Input -->
+        <!-- Keyword input -->
         <div class="mb-3">
-          <label for="keyword" class="form-label fw-bold">Keyword</label>
-          <input type="text" id="keyword" name="keyword" class="form-control" placeholder="Enter keyword (ignored for Auto-Decryption)" value="{{ request.form.keyword or '' }}">
+            <label for="keyword" class="form-label">Keyword (leave empty for auto-decrypt):</label>
+            <input type="text" class="form-control" id="keyword" name="keyword" value="{{ request.form.get('keyword', '') }}">
         </div>
 
-        <!-- Action Buttons -->
-        <div class="d-flex justify-content-center gap-3 mb-3">
-          <button type="submit" name="action" value="encrypt" class="btn btn-success px-4">Encrypt</button>
-          <button type="submit" name="action" value="decrypt" class="btn btn-primary px-4">Decrypt</button>
-          <button type="submit" name="action" value="auto-decrypt" class="btn btn-warning px-4">Auto-Decrypt</button>
+        <!-- Buttons -->
+        <div class="d-flex gap-2">
+            <button type="submit" name="action" value="encrypt" class="btn btn-primary">Encrypt</button>
+            <button type="submit" name="action" value="decrypt" class="btn btn-success">Decrypt</button>
+            <button type="submit" name="action" value="auto" class="btn btn-warning">Auto Decrypt</button>
         </div>
-      </form>
-    </div>
+    </form>
 
-    <!-- Results -->
+    <!-- Result Section -->
     {% if result %}
-    <div class="card shadow-lg p-4 rounded-4 mt-4">
-      <h5 class="fw-bold">Result:</h5>
-      <p class="text-dark fs-5">{{ result }}</p>
+    <div class="card shadow mt-4 p-4">
+        <h5>Result:</h5>
+        <pre class="p-2 bg-dark text-white rounded">{{ result }}</pre>
 
-      {% if guessed_key %}
-      <p class="text-muted"><strong>Guessed Key:</strong> {{ guessed_key }}</p>
-      {% endif %}
+        {% if guessed_key %}
+        <p><strong>Guessed Key:</strong> {{ guessed_key }}</p>
+        {% endif %}
     </div>
     {% endif %}
-
-    <footer class="text-center mt-4 text-muted">
-      
-    </footer>
-  </div>
+</div>
 
 </body>
 </html>
-
