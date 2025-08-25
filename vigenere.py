@@ -1,12 +1,15 @@
 import re
 from collections import Counter
-from spellchecker import SpellChecker
+import itertools
+
 
 def vigenere_encrypt(plaintext, keyword):
     ciphertext = []
     keyword = keyword.upper()
     plaintext = plaintext.upper()
-    keyword_repeated = (keyword * (len(plaintext) // len(keyword) + 1))[:len(plaintext)]  
+
+    keyword_repeated = (keyword * (len(plaintext) // len(keyword) + 1))[:len(plaintext)]
+
     for p, k in zip(plaintext, keyword_repeated):
         if p.isalpha():
             shift = ord(k) - ord('A')
@@ -14,13 +17,17 @@ def vigenere_encrypt(plaintext, keyword):
             ciphertext.append(encrypted_char)
         else:
             ciphertext.append(p)
+
     return ''.join(ciphertext)
+
 
 def vigenere_decrypt(ciphertext, keyword):
     plaintext = []
     keyword = keyword.upper()
     ciphertext = ciphertext.upper()
-    keyword_repeated = (keyword * (len(ciphertext) // len(keyword) + 1))[:len(ciphertext)]  
+
+    keyword_repeated = (keyword * (len(ciphertext) // len(keyword) + 1))[:len(ciphertext)]
+
     for c, k in zip(ciphertext, keyword_repeated):
         if c.isalpha():
             shift = ord(k) - ord('A')
@@ -28,7 +35,10 @@ def vigenere_decrypt(ciphertext, keyword):
             plaintext.append(decrypted_char)
         else:
             plaintext.append(c)
+
     return ''.join(plaintext)
+
+
 
 ENGLISH_FREQ = {
     'E': 12.7, 'T': 9.1, 'A': 8.2, 'O': 7.5, 'I': 7.0, 'N': 6.7,
@@ -63,9 +73,31 @@ def guess_caesar_shift(text):
             best_shift, best_chi2 = shift, chi2
     return best_shift
 
+
+
 def auto_vigenere_decrypt(ciphertext, max_keylen=10):
     ciphertext = ciphertext.upper()
+    COMMON_WORDS = ["THE", "IS", "THIS", "SECRET", "HELLO", "MESSAGE"]
+
     best_score, best_plain, best_key = float("inf"), "", ""
+
+    # 1) Brute force for very short texts & small key length
+    if len(ciphertext) < 40:  # short text
+        for keylen in range(1, min(4, max_keylen + 1)):  # brute up to length 3
+            for key_tuple in itertools.product("ABCDEFGHIJKLMNOPQRSTUVWXYZ", repeat=keylen):
+                keyword = "".join(key_tuple)
+                plain = vigenere_decrypt(ciphertext, keyword)
+
+                score = chi_squared_stat(plain)
+                bonus = sum(plain.count(w) for w in COMMON_WORDS)
+                score /= (1 + bonus)
+
+                if score < best_score:
+                    best_score, best_plain, best_key = score, plain, keyword
+        if best_plain:
+            return best_plain, best_key
+
+    # 2) Frequency analysis for longer texts
     for keylen in range(1, max_keylen + 1):
         key_shifts = []
         for i in range(keylen):
@@ -75,12 +107,30 @@ def auto_vigenere_decrypt(ciphertext, max_keylen=10):
                 key_shifts.append(shift)
             else:
                 key_shifts.append(0)
+
         keyword = ''.join(chr(s + ord('A')) for s in key_shifts)
         plain = vigenere_decrypt(ciphertext, keyword)
+
         score = chi_squared_stat(plain)
+        bonus = sum(plain.count(w) for w in COMMON_WORDS)
+        score /= (1 + bonus)
+
         if score < best_score:
             best_score, best_plain, best_key = score, plain, keyword
-    sp = SpellChecker()
-    corrected_words = [sp.correction(w) or w for w in best_plain.split()]
-    corrected_plain = " ".join(corrected_words)
-    return corrected_plain, best_key
+
+    return best_plain, best_key
+if __name__ == "__main__":
+    plaintext = "HELLO THIS IS A SECRET MESSAGE"
+    keyword = "KEY"
+
+    # Encrypt
+    encrypted = vigenere_encrypt(plaintext, keyword)
+    print("Encrypted:", encrypted)
+
+    # Decrypt with known key
+    print("Manual decrypt:", vigenere_decrypt(encrypted, keyword))
+
+    # Auto-decrypt (no key provided)
+    auto_plain, auto_key = auto_vigenere_decrypt(encrypted, max_keylen=8)
+    print("Auto-decrypted:", auto_plain)
+    print("Guessed key:", auto_key)
